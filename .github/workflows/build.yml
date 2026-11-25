@@ -24,25 +24,22 @@ jobs:
           gradle-version: current
       - name: Build
         run: gradle build --no-daemon
-      - name: Dump API (only on failure)
+      - name: Dump API 2 (only on failure)
         if: failure()
         run: |
           set +e
-          for j in $(find ~/.gradle/caches/fabric-loom -name '*.jar' -size +10M 2>/dev/null); do
-            if unzip -l "$j" | grep -q 'net/minecraft/client/MinecraftClient.class'; then
-              echo "### MC JAR: $j"
-              for c in net.minecraft.client.render.RenderLayer net.minecraft.client.render.VertexRendering net.minecraft.client.render.Camera net.minecraft.entity.Entity; do
-                echo "--- $c"
-                javap -cp "$j" -public $c 2>&1 | grep -E 'static|getPos|getEntityPos|getCameraPos|Pos\(\)|Error|not found'
-              done
-              echo "--- render classes"
-              unzip -l "$j" | awk '{print $4}' | grep -E 'client/render/(Render|Vertex|Debug|Shape|Line|command|state/)|client/gl/Render' | head -150
-            fi
+          MC=$(find ~/.gradle/caches/fabric-loom/minecraftMaven -name 'minecraft-merged*.jar' | head -1)
+          FA=$(find ~/.gradle/caches/modules-2 -name 'fabric-rendering-v1-*.jar' ! -name '*sources*' | head -1)
+          CP="$MC:$FA"
+          for c in net.minecraft.client.render.RenderLayers net.minecraft.client.render.RenderLayer net.minecraft.client.render.VertexConsumer net.minecraft.client.render.VertexConsumerProvider; do
+            echo "--- $c"
+            javap -cp "$CP" -public "$c" | grep -v -E 'static final (int|float|double|long|java.lang.String) '
           done
-          echo "### FABRIC API"
-          for j in $(find ~/.gradle -name '*.jar' -path '*abric*' -size -60M 2>/dev/null); do
-            r=$(unzip -l "$j" 2>/dev/null | awk '{print $4}' | grep -E 'rendering/v1/.*(WorldRender|world/)')
-            if [ -n "$r" ]; then echo "# $j"; echo "$r"; fi
+          echo "--- GameRenderer camera"
+          javap -cp "$CP" -public net.minecraft.client.render.GameRenderer | grep -i camera
+          for c in 'net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext' 'net.fabricmc.fabric.api.client.rendering.v1.world.AbstractWorldRenderContext' 'net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents' 'net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents$EndMain' 'net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents$AfterEntities' 'net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents$BeforeTranslucent'; do
+            echo "--- $c"
+            javap -cp "$CP" -public "$c"
           done
       - uses: actions/upload-artifact@v4
         with:
