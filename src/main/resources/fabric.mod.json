@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "trapbuilder",
+  "version": "${version}",
+  "name": "TrapBuilder Assistant",
+  "description": "Client-side schematic overlay that guides you through building traps.",
+  "environment": "client",
+  "entrypoints": { "client": ["com.trapbuilder.TrapBuilderClient"] },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
