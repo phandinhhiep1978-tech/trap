@@ -24,6 +24,26 @@ jobs:
           gradle-version: current
       - name: Build
         run: gradle build --no-daemon
+      - name: Dump API (only on failure)
+        if: failure()
+        run: |
+          set +e
+          for j in $(find ~/.gradle/caches/fabric-loom -name '*.jar' -size +10M 2>/dev/null); do
+            if unzip -l "$j" | grep -q 'net/minecraft/client/MinecraftClient.class'; then
+              echo "### MC JAR: $j"
+              for c in net.minecraft.client.render.RenderLayer net.minecraft.client.render.VertexRendering net.minecraft.client.render.Camera net.minecraft.entity.Entity; do
+                echo "--- $c"
+                javap -cp "$j" -public $c 2>&1 | grep -E 'static|getPos|getEntityPos|getCameraPos|Pos\(\)|Error|not found'
+              done
+              echo "--- render classes"
+              unzip -l "$j" | awk '{print $4}' | grep -E 'client/render/(Render|Vertex|Debug|Shape|Line|command|state/)|client/gl/Render' | head -150
+            fi
+          done
+          echo "### FABRIC API"
+          for j in $(find ~/.gradle -name '*.jar' -path '*abric*' -size -60M 2>/dev/null); do
+            r=$(unzip -l "$j" 2>/dev/null | awk '{print $4}' | grep -E 'rendering/v1/.*(WorldRender|world/)')
+            if [ -n "$r" ]; then echo "# $j"; echo "$r"; fi
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: trapbuilder-assistant
