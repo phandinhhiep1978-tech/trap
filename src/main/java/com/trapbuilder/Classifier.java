@@ -13,11 +13,28 @@ import java.util.Set;
 public final class Classifier {
 	public enum Kind { DIG, DROP, TRIGGER, REDSTONE, STRUCTURE }
 
-	private static final Set<Block> STONE = Set.of(Blocks.STONE, Blocks.COBBLESTONE, Blocks.ANDESITE,
-		Blocks.DIORITE, Blocks.GRANITE, Blocks.DEEPSLATE, Blocks.COBBLED_DEEPSLATE, Blocks.STONE_BRICKS,
-		Blocks.SMOOTH_STONE, Blocks.TUFF);
+	private static final Set<Block> STONE = Set.of(
+		// stone family
+		Blocks.STONE, Blocks.COBBLESTONE, Blocks.MOSSY_COBBLESTONE, Blocks.STONE_BRICKS, Blocks.SMOOTH_STONE,
+		Blocks.ANDESITE, Blocks.DIORITE, Blocks.GRANITE,
+		Blocks.POLISHED_ANDESITE, Blocks.POLISHED_DIORITE, Blocks.POLISHED_GRANITE,
+		// deep underground
+		Blocks.DEEPSLATE, Blocks.COBBLED_DEEPSLATE, Blocks.POLISHED_DEEPSLATE,
+		Blocks.TUFF, Blocks.CALCITE, Blocks.DRIPSTONE_BLOCK,
+		Blocks.BASALT, Blocks.SMOOTH_BASALT, Blocks.BLACKSTONE,
+		Blocks.GRAVEL,
+		// ores
+		Blocks.COAL_ORE, Blocks.DEEPSLATE_COAL_ORE,
+		Blocks.IRON_ORE, Blocks.DEEPSLATE_IRON_ORE,
+		Blocks.COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE,
+		Blocks.GOLD_ORE, Blocks.DEEPSLATE_GOLD_ORE,
+		Blocks.REDSTONE_ORE, Blocks.DEEPSLATE_REDSTONE_ORE,
+		Blocks.LAPIS_ORE, Blocks.DEEPSLATE_LAPIS_ORE,
+		Blocks.DIAMOND_ORE, Blocks.DEEPSLATE_DIAMOND_ORE,
+		Blocks.EMERALD_ORE, Blocks.DEEPSLATE_EMERALD_ORE);
 	private static final Set<Block> DIRT = Set.of(Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.COARSE_DIRT,
-		Blocks.PODZOL, Blocks.MYCELIUM);
+		Blocks.PODZOL, Blocks.MYCELIUM, Blocks.ROOTED_DIRT, Blocks.MUD, Blocks.CLAY,
+		Blocks.SAND, Blocks.RED_SAND);
 	private static final Set<Block> METAL = Set.of(Blocks.IRON_BLOCK, Blocks.COPPER_BLOCK, Blocks.CUT_COPPER,
 		Blocks.EXPOSED_COPPER, Blocks.WEATHERED_COPPER, Blocks.OXIDIZED_COPPER);
 
